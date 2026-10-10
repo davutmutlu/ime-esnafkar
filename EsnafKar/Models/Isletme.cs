@@ -6,13 +6,16 @@ namespace EsnafKar.Models
     {
         public int Id { get; set; }
 
+        [Display(Name = "İşletme Adı")]
         [Required(ErrorMessage = "İşletme adı zorunludur.")]
-        [StringLength(100)]
+        [StringLength(100, ErrorMessage = "İşletme adı en fazla 100 karakter olabilir.")]
         public string Ad { get; set; } = string.Empty;
 
-        [StringLength(50)]
+        [Display(Name = "İşletme Türü")]
+        [StringLength(50, ErrorMessage = "İşletme türü en fazla 50 karakter olabilir.")]
         public string? Tur { get; set; }
 
+        [Display(Name = "Kayıt Tarihi")]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
     }
 }

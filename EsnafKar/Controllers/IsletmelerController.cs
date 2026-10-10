@@ -48,7 +48,7 @@ public class IsletmelerController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Ad,Tur,OlusturmaTarihi")] Isletme isletme)
+    public async Task<IActionResult> Create([Bind("Ad,Tur")] Isletme isletme)
     {
         if (ModelState.IsValid)
         {
