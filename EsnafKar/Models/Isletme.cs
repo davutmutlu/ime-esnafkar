@@ -12,8 +12,9 @@ namespace EsnafKar.Models
         public string Ad { get; set; } = string.Empty;
 
         [Display(Name = "İşletme Türü")]
+        [Required(ErrorMessage = "İşletme türü seçilmelidir.")]
         [StringLength(50, ErrorMessage = "İşletme türü en fazla 50 karakter olabilir.")]
-        public string? Tur { get; set; }
+        public string Tur { get; set; } = string.Empty;
 
         [Display(Name = "Kayıt Tarihi")]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;

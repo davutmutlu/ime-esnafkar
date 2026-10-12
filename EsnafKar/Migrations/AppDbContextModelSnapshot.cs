@@ -39,6 +39,7 @@ namespace EsnafKar.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Tur")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 

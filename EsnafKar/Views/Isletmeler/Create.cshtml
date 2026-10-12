@@ -20,7 +20,9 @@
 
             <div class="mb-3">
                 <label asp-for="Tur" class="form-label"></label>
-                <input asp-for="Tur" class="form-control" placeholder="Örn: Kafe, Kuaför, Market" />
+                <select asp-for="Tur" asp-items="@(new SelectList(EsnafKar.Models.IsletmeTurleri.Liste))" class="form-select">
+    <option value="">-- Tür seçin --</option>
+</select>
                 <span asp-validation-for="Tur" class="text-danger"></span>
             </div>
 
