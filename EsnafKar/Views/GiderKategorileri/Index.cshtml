@@ -1,0 +1,44 @@
+@model IEnumerable<EsnafKar.Models.GiderKategorisi>
+
+@{
+    ViewData["Title"] = "Gider Kategorileri";
+}
+
+<h1>Gider Kategorileri</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">+ Yeni Kategori Ekle</a>
+</p>
+
+@if (TempData["Hata"] != null)
+{
+    <div class="alert alert-danger">@TempData["Hata"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz kayıtlı bir kategori yok.</div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Ad)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderBy(k => k.Ad))
+            {
+                <tr>
+                    <td>@item.Ad</td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

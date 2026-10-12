@@ -1,0 +1,18 @@
+@model EsnafKar.Models.GiderKategorisi
+
+@{
+    ViewData["Title"] = "Kategoriyi Sil";
+}
+
+<h1>Kategoriyi Sil</h1>
+<hr />
+
+<div class="alert alert-danger">
+    <strong>@Model.Ad</strong> kategorisini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">Vazgeç</a>
+</form>

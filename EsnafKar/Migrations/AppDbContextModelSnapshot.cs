@@ -22,6 +22,104 @@ namespace EsnafKar.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EsnafKar.Models.Gider", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Aciklama")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("GiderKategorisiId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsletmeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Tarih")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Tutar")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GiderKategorisiId");
+
+                    b.HasIndex("IsletmeId");
+
+                    b.ToTable("Giderler");
+                });
+
+            modelBuilder.Entity("EsnafKar.Models.GiderKategorisi", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GiderKategorileri");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Ad = "Kira"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Ad = "Maaş"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Ad = "Elektrik"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Ad = "Su"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Ad = "Doğalgaz"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Ad = "İnternet / Telefon"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Ad = "Vergi / Harç"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Ad = "Bakım / Onarım"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Ad = "Diğer"
+                        });
+                });
+
             modelBuilder.Entity("EsnafKar.Models.Isletme", b =>
                 {
                     b.Property<int>("Id")
@@ -46,6 +144,25 @@ namespace EsnafKar.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Isletmeler");
+                });
+
+            modelBuilder.Entity("EsnafKar.Models.Gider", b =>
+                {
+                    b.HasOne("EsnafKar.Models.GiderKategorisi", "GiderKategorisi")
+                        .WithMany()
+                        .HasForeignKey("GiderKategorisiId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("EsnafKar.Models.Isletme", "Isletme")
+                        .WithMany()
+                        .HasForeignKey("IsletmeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GiderKategorisi");
+
+                    b.Navigation("Isletme");
                 });
 #pragma warning restore 612, 618
         }
