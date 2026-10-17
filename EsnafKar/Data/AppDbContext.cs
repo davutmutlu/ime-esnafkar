@@ -12,6 +12,7 @@ namespace EsnafKar.Data
         public DbSet<Isletme> Isletmeler { get; set; }
         public DbSet<GiderKategorisi> GiderKategorileri { get; set; }
         public DbSet<Gider> Giderler { get; set; }
+        public DbSet<Gelir> Gelirler { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

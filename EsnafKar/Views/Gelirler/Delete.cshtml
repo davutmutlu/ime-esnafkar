@@ -1,0 +1,32 @@
+﻿@model EsnafKar.Models.Gelir
+
+@{
+    ViewData["Title"] = "Geliri Sil";
+}
+
+<h1>Geliri Sil</h1>
+<hr />
+
+<div class="alert alert-danger">
+    Bu geliri silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">İşletme</dt>
+    <dd class="col-sm-9">@Model.Isletme?.Ad</dd>
+
+    <dt class="col-sm-3">Tarih</dt>
+    <dd class="col-sm-9">@Model.Tarih.ToString("dd.MM.yyyy")</dd>
+
+    <dt class="col-sm-3">Günlük Ciro</dt>
+    <dd class="col-sm-9">@Model.Tutar.ToString("N2") ₺</dd>
+
+    <dt class="col-sm-3">Açıklama</dt>
+    <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Aciklama) ? "-" : Model.Aciklama)</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Evet, Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">Vazgeç</a>
+</form>

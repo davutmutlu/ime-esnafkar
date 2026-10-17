@@ -22,6 +22,34 @@ namespace EsnafKar.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EsnafKar.Models.Gelir", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Aciklama")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("IsletmeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Tarih")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Tutar")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsletmeId");
+
+                    b.ToTable("Gelirler");
+                });
+
             modelBuilder.Entity("EsnafKar.Models.Gider", b =>
                 {
                     b.Property<int>("Id")
@@ -144,6 +172,17 @@ namespace EsnafKar.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Isletmeler");
+                });
+
+            modelBuilder.Entity("EsnafKar.Models.Gelir", b =>
+                {
+                    b.HasOne("EsnafKar.Models.Isletme", "Isletme")
+                        .WithMany()
+                        .HasForeignKey("IsletmeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Isletme");
                 });
 
             modelBuilder.Entity("EsnafKar.Models.Gider", b =>

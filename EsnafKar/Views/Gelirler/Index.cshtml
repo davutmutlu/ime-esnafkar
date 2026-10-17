@@ -1,0 +1,51 @@
+﻿@model IEnumerable<EsnafKar.Models.Gelir>
+
+@{
+    ViewData["Title"] = "Gelirler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Gelirler</h1>
+    <a asp-action="Create" class="btn btn-primary">+ Yeni Gelir Ekle</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz gelir eklenmemiş.</div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>İşletme</th>
+                <th>Açıklama</th>
+                <th class="text-end">Günlük Ciro</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var gelir in Model)
+            {
+                <tr>
+                    <td>@gelir.Tarih.ToString("dd.MM.yyyy")</td>
+                    <td>@gelir.Isletme?.Ad</td>
+                    <td>@gelir.Aciklama</td>
+                    <td class="text-end">@gelir.Tutar.ToString("N2") ₺</td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@gelir.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                        <a asp-action="Delete" asp-route-id="@gelir.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="fw-bold">
+                <td colspan="3">Toplam</td>
+                <td class="text-end">@Model.Sum(g => g.Tutar).ToString("N2") ₺</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+}
