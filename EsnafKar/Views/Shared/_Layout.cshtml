@@ -39,6 +39,28 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="KarRaporu" asp-action="Index">Kâr Raporu</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <li class="nav-item">
+            <span class="nav-link text-dark">@User.Identity.Name</span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Hesap" asp-action="Cikis" method="post">
+                <button type="submit" class="nav-link btn btn-link text-dark">Çıkış Yap</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Hesap" asp-action="Giris">Giriş Yap</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Hesap" asp-action="Kayit">Kayıt Ol</a>
+        </li>
+    }
+</ul>
                 </div>
             </div>
         </nav>

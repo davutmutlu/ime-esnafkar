@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace EsnafKar.Models
 {
@@ -18,5 +19,9 @@ namespace EsnafKar.Models
 
         [Display(Name = "Kayıt Tarihi")]
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+
+
+        public string? KullaniciId { get; set; }
+        public IdentityUser? Kullanici { get; set; }
     }
 }

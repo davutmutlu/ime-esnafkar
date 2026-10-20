@@ -1,0 +1,46 @@
+﻿@model EsnafKar.Models.KayitModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h1 class="mb-4">Kayıt Ol</h1>
+
+        <form asp-action="Kayit">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Eposta" class="form-label"></label>
+                <input asp-for="Eposta" class="form-control" placeholder="ornek@mail.com" />
+                <span asp-validation-for="Eposta" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Sifre" class="form-label"></label>
+                <input asp-for="Sifre" class="form-control" />
+                <div class="form-text">En az 6 karakter, en az bir rakam ve bir küçük harf.</div>
+                <span asp-validation-for="Sifre" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SifreTekrar" class="form-label"></label>
+                <input asp-for="SifreTekrar" class="form-control" />
+                <span asp-validation-for="SifreTekrar" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Kayıt Ol</button>
+        </form>
+
+        <p class="mt-3 text-center">
+            Zaten hesabınız var mı? <a asp-action="Giris">Giriş yapın</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
