@@ -1,4 +1,5 @@
-﻿using EsnafKar.Data;
+﻿using System.Security.Claims;
+using EsnafKar.Data;
 using EsnafKar.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,6 +18,15 @@ namespace EsnafKar.Controllers
 
         public async Task<IActionResult> Index(int? isletmeId, int? yil, int? ay)
         {
+            var kullaniciId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            // Seçilen işletme başkasınınsa yokmuş gibi davran
+            if (isletmeId != null &&
+                !await _context.Isletmeler.AnyAsync(i => i.Id == isletmeId && i.KullaniciId == kullaniciId))
+            {
+                isletmeId = null;
+            }
+
             var rapor = new KarRaporu
             {
                 IsletmeId = isletmeId,
@@ -27,7 +37,10 @@ namespace EsnafKar.Controllers
             if (rapor.Ay < 1 || rapor.Ay > 12) rapor.Ay = DateTime.Today.Month;
             if (rapor.Yil < 2000 || rapor.Yil > 2100) rapor.Yil = DateTime.Today.Year;
 
-            ViewData["IsletmeId"] = new SelectList(_context.Isletmeler.OrderBy(i => i.Ad), "Id", "Ad", isletmeId);
+            var isletmeler = _context.Isletmeler
+                .Where(i => i.KullaniciId == kullaniciId)
+                .OrderBy(i => i.Ad);
+            ViewData["IsletmeId"] = new SelectList(isletmeler, "Id", "Ad", isletmeId);
 
             if (isletmeId == null)
             {

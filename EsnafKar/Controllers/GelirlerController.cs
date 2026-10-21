@@ -1,4 +1,5 @@
-﻿using EsnafKar.Data;
+﻿using System.Security.Claims;
+using EsnafKar.Data;
 using EsnafKar.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,10 +16,27 @@ namespace EsnafKar.Controllers
             _context = context;
         }
 
+        // Giriş yapan kullanıcının numarası
+        private string KullaniciId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        // Sadece kullanıcının işletmelerine ait gelirler
+        private IQueryable<Gelir> Gelirlerim()
+        {
+            var kullaniciId = KullaniciId;
+            return _context.Gelirler.Where(g => g.Isletme!.KullaniciId == kullaniciId);
+        }
+
+        // Seçilen işletme bu kullanıcıya mı ait?
+        private async Task<bool> IsletmeBenimMi(int isletmeId)
+        {
+            var kullaniciId = KullaniciId;
+            return await _context.Isletmeler.AnyAsync(i => i.Id == isletmeId && i.KullaniciId == kullaniciId);
+        }
+
         // Liste sayfası
         public async Task<IActionResult> Index()
         {
-            var gelirler = await _context.Gelirler
+            var gelirler = await Gelirlerim()
                 .Include(g => g.Isletme)
                 .OrderByDescending(g => g.Tarih)
                 .ToListAsync();
@@ -37,6 +55,11 @@ namespace EsnafKar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IsletmeId,Tarih,Tutar,Aciklama")] Gelir gelir)
         {
+            if (!await IsletmeBenimMi(gelir.IsletmeId))
+            {
+                ModelState.AddModelError("IsletmeId", "İşletme seçilmelidir.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(gelir);
@@ -52,7 +75,7 @@ namespace EsnafKar.Controllers
         {
             if (id == null) return NotFound();
 
-            var gelir = await _context.Gelirler.FindAsync(id);
+            var gelir = await Gelirlerim().FirstOrDefaultAsync(g => g.Id == id);
             if (gelir == null) return NotFound();
 
             IsletmeListesiniHazirla(gelir.IsletmeId);
@@ -65,6 +88,12 @@ namespace EsnafKar.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,IsletmeId,Tarih,Tutar,Aciklama")] Gelir gelir)
         {
             if (id != gelir.Id) return NotFound();
+            if (!await Gelirlerim().AnyAsync(g => g.Id == id)) return NotFound();
+
+            if (!await IsletmeBenimMi(gelir.IsletmeId))
+            {
+                ModelState.AddModelError("IsletmeId", "İşletme seçilmelidir.");
+            }
 
             if (ModelState.IsValid)
             {
@@ -81,7 +110,7 @@ namespace EsnafKar.Controllers
         {
             if (id == null) return NotFound();
 
-            var gelir = await _context.Gelirler
+            var gelir = await Gelirlerim()
                 .Include(g => g.Isletme)
                 .FirstOrDefaultAsync(g => g.Id == id);
             if (gelir == null) return NotFound();
@@ -94,7 +123,7 @@ namespace EsnafKar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var gelir = await _context.Gelirler.FindAsync(id);
+            var gelir = await Gelirlerim().FirstOrDefaultAsync(g => g.Id == id);
             if (gelir != null)
             {
                 _context.Gelirler.Remove(gelir);
@@ -103,10 +132,14 @@ namespace EsnafKar.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Açılır listeye işletmeleri doldurur
+        // Açılır listeye sadece kullanıcının işletmelerini doldurur
         private void IsletmeListesiniHazirla(int? seciliIsletme = null)
         {
-            ViewData["IsletmeId"] = new SelectList(_context.Isletmeler.OrderBy(i => i.Ad), "Id", "Ad", seciliIsletme);
+            var kullaniciId = KullaniciId;
+            var isletmeler = _context.Isletmeler
+                .Where(i => i.KullaniciId == kullaniciId)
+                .OrderBy(i => i.Ad);
+            ViewData["IsletmeId"] = new SelectList(isletmeler, "Id", "Ad", seciliIsletme);
         }
     }
 }

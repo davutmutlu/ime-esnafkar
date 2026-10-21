@@ -10,5 +10,7 @@ namespace EsnafKar.Models
         [Required(ErrorMessage = "Kategori adı zorunludur.")]
         [StringLength(50, ErrorMessage = "Kategori adı en fazla 50 karakter olabilir.")]
         public string Ad { get; set; } = string.Empty;
+
+        public string? KullaniciId { get; set; }
     }
 }
