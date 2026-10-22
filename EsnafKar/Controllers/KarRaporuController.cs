@@ -81,6 +81,31 @@ namespace EsnafKar.Controllers
                 .OrderByDescending(k => k.Tutar)
                 .ToListAsync();
 
+            // Son 6 ay (grafik için)
+            var kisaAylar = new[] { "Oca", "Şub", "Mar", "Nis", "May", "Haz",
+                                    "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara" };
+
+            for (int i = 5; i >= 0; i--)
+            {
+                var ayBasi = baslangic.AddMonths(-i);
+                var aySonu = ayBasi.AddMonths(1);
+
+                var gelir = await _context.Gelirler
+                    .Where(g => g.IsletmeId == isletmeId && g.Tarih >= ayBasi && g.Tarih < aySonu)
+                    .SumAsync(g => g.Tutar);
+
+                var gider = await _context.Giderler
+                    .Where(g => g.IsletmeId == isletmeId && g.Tarih >= ayBasi && g.Tarih < aySonu)
+                    .SumAsync(g => g.Tutar);
+
+                rapor.SonAltiAy.Add(new AylikToplam
+                {
+                    AyAdi = kisaAylar[ayBasi.Month - 1] + " " + ayBasi.Year,
+                    Gelir = gelir,
+                    Gider = gider
+                });
+            }
+
             return View(rapor);
         }
     }

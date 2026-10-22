@@ -16,6 +16,8 @@
 
         public List<KategoriToplami> GiderDagilimi { get; set; } = new();
 
+        public List<AylikToplam> SonAltiAy { get; set; } = new();
+
         // İki rakam arasındaki değişimi yüzde olarak hesaplar
         public static decimal? Degisim(decimal simdi, decimal onceki)
         {
@@ -28,5 +30,12 @@
     {
         public string Kategori { get; set; } = string.Empty;
         public decimal Tutar { get; set; }
+    }
+
+    public class AylikToplam
+    {
+        public string AyAdi { get; set; } = string.Empty;
+        public decimal Gelir { get; set; }
+        public decimal Gider { get; set; }
     }
 }
