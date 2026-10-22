@@ -40,14 +40,41 @@ namespace EsnafKar.Controllers
             return await _context.GiderKategorileri.AnyAsync(k =>
                 k.Id == kategoriId && (k.KullaniciId == null || k.KullaniciId == kullaniciId));
         }
-        // Liste sayfası
-        public async Task<IActionResult> Index()
+
+        // Liste sayfası (filtreli)
+        public async Task<IActionResult> Index(int? isletmeId, int? kategoriId, int? yil, int? ay)
         {
-            var giderler = await Giderlerim()
+            var sorgu = Giderlerim();
+
+            if (isletmeId != null)
+            {
+                sorgu = sorgu.Where(g => g.IsletmeId == isletmeId);
+            }
+
+            if (kategoriId != null)
+            {
+                sorgu = sorgu.Where(g => g.GiderKategorisiId == kategoriId);
+            }
+
+            if (yil != null)
+            {
+                sorgu = sorgu.Where(g => g.Tarih.Year == yil);
+            }
+
+            if (ay != null)
+            {
+                sorgu = sorgu.Where(g => g.Tarih.Month == ay);
+            }
+
+            var giderler = await sorgu
                 .Include(g => g.Isletme)
                 .Include(g => g.GiderKategorisi)
                 .OrderByDescending(g => g.Tarih)
                 .ToListAsync();
+
+            ListeleriHazirla(isletmeId, kategoriId);
+            ViewData["SeciliYil"] = yil;
+            ViewData["SeciliAy"] = ay;
             return View(giderler);
         }
 
@@ -112,7 +139,6 @@ namespace EsnafKar.Controllers
             {
                 ModelState.AddModelError("GiderKategorisiId", "Kategori seçilmelidir.");
             }
-           
 
             if (ModelState.IsValid)
             {
@@ -160,6 +186,7 @@ namespace EsnafKar.Controllers
                 .Where(i => i.KullaniciId == kullaniciId)
                 .OrderBy(i => i.Ad);
             ViewData["IsletmeId"] = new SelectList(isletmeler, "Id", "Ad", seciliIsletme);
+
             var kategoriler = _context.GiderKategorileri
                 .Where(k => k.KullaniciId == null || k.KullaniciId == kullaniciId)
                 .OrderBy(k => k.Ad);

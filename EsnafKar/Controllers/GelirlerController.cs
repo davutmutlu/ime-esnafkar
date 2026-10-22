@@ -33,13 +33,34 @@ namespace EsnafKar.Controllers
             return await _context.Isletmeler.AnyAsync(i => i.Id == isletmeId && i.KullaniciId == kullaniciId);
         }
 
-        // Liste sayfası
-        public async Task<IActionResult> Index()
+        // Liste sayfası (filtreli)
+        public async Task<IActionResult> Index(int? isletmeId, int? yil, int? ay)
         {
-            var gelirler = await Gelirlerim()
+            var sorgu = Gelirlerim();
+
+            if (isletmeId != null)
+            {
+                sorgu = sorgu.Where(g => g.IsletmeId == isletmeId);
+            }
+
+            if (yil != null)
+            {
+                sorgu = sorgu.Where(g => g.Tarih.Year == yil);
+            }
+
+            if (ay != null)
+            {
+                sorgu = sorgu.Where(g => g.Tarih.Month == ay);
+            }
+
+            var gelirler = await sorgu
                 .Include(g => g.Isletme)
                 .OrderByDescending(g => g.Tarih)
                 .ToListAsync();
+
+            IsletmeListesiniHazirla(isletmeId);
+            ViewData["SeciliYil"] = yil;
+            ViewData["SeciliAy"] = ay;
             return View(gelirler);
         }
 
