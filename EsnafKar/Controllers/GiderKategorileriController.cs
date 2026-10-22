@@ -113,5 +113,5 @@ namespace EsnafKar.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-    }
+}
 }

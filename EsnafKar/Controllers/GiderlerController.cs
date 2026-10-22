@@ -33,6 +33,13 @@ namespace EsnafKar.Controllers
             return await _context.Isletmeler.AnyAsync(i => i.Id == isletmeId && i.KullaniciId == kullaniciId);
         }
 
+        // Seçilen kategori ortak mı ya da bu kullanıcının mı?
+        private async Task<bool> KategoriBenimMi(int kategoriId)
+        {
+            var kullaniciId = KullaniciId;
+            return await _context.GiderKategorileri.AnyAsync(k =>
+                k.Id == kategoriId && (k.KullaniciId == null || k.KullaniciId == kullaniciId));
+        }
         // Liste sayfası
         public async Task<IActionResult> Index()
         {
@@ -59,6 +66,11 @@ namespace EsnafKar.Controllers
             if (!await IsletmeBenimMi(gider.IsletmeId))
             {
                 ModelState.AddModelError("IsletmeId", "İşletme seçilmelidir.");
+            }
+
+            if (!await KategoriBenimMi(gider.GiderKategorisiId))
+            {
+                ModelState.AddModelError("GiderKategorisiId", "Kategori seçilmelidir.");
             }
 
             if (ModelState.IsValid)
@@ -95,6 +107,12 @@ namespace EsnafKar.Controllers
             {
                 ModelState.AddModelError("IsletmeId", "İşletme seçilmelidir.");
             }
+
+            if (!await KategoriBenimMi(gider.GiderKategorisiId))
+            {
+                ModelState.AddModelError("GiderKategorisiId", "Kategori seçilmelidir.");
+            }
+           
 
             if (ModelState.IsValid)
             {
@@ -142,7 +160,10 @@ namespace EsnafKar.Controllers
                 .Where(i => i.KullaniciId == kullaniciId)
                 .OrderBy(i => i.Ad);
             ViewData["IsletmeId"] = new SelectList(isletmeler, "Id", "Ad", seciliIsletme);
-            ViewData["GiderKategorisiId"] = new SelectList(_context.GiderKategorileri.OrderBy(k => k.Ad), "Id", "Ad", seciliKategori);
+            var kategoriler = _context.GiderKategorileri
+                .Where(k => k.KullaniciId == null || k.KullaniciId == kullaniciId)
+                .OrderBy(k => k.Ad);
+            ViewData["GiderKategorisiId"] = new SelectList(kategoriler, "Id", "Ad", seciliKategori);
         }
     }
 }

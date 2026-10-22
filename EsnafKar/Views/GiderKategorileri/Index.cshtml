@@ -4,41 +4,42 @@
     ViewData["Title"] = "Gider Kategorileri";
 }
 
-<h1>Gider Kategorileri</h1>
-
-<p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Gider Kategorileri</h1>
     <a asp-action="Create" class="btn btn-primary">+ Yeni Kategori Ekle</a>
-</p>
+</div>
 
 @if (TempData["Hata"] != null)
 {
     <div class="alert alert-danger">@TempData["Hata"]</div>
 }
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Henüz kayıtlı bir kategori yok.</div>
-}
-else
-{
-    <table class="table table-hover">
-        <thead>
+<p class="text-muted">Ortak kategoriler herkes için aynıdır ve değiştirilemez. Kendi kategorilerinizi ekleyip düzenleyebilirsiniz.</p>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Kategori Adı</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var kategori in Model)
+        {
             <tr>
-                <th>@Html.DisplayNameFor(model => model.Ad)</th>
-                <th></th>
+                <td>@kategori.Ad</td>
+                <td class="text-end">
+                    @if (kategori.KullaniciId == null)
+                    {
+                        <span class="badge bg-secondary">Ortak</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Edit" asp-route-id="@kategori.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                        <a asp-action="Delete" asp-route-id="@kategori.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                    }
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.OrderBy(k => k.Ad))
-            {
-                <tr>
-                    <td>@item.Ad</td>
-                    <td class="text-end">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Sil</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+        }
+    </tbody>
+</table>
