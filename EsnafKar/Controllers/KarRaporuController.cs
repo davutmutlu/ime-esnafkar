@@ -49,7 +49,9 @@ namespace EsnafKar.Controllers
 
             var baslangic = new DateTime(rapor.Yil, rapor.Ay, 1);
             var bitis = baslangic.AddMonths(1);
+            var oncekiBaslangic = baslangic.AddMonths(-1);
 
+            // Bu ay
             rapor.ToplamGelir = await _context.Gelirler
                 .Where(g => g.IsletmeId == isletmeId && g.Tarih >= baslangic && g.Tarih < bitis)
                 .SumAsync(g => g.Tutar);
@@ -59,6 +61,16 @@ namespace EsnafKar.Controllers
 
             rapor.ToplamGider = await giderler.SumAsync(g => g.Tutar);
 
+            // Geçen ay
+            rapor.OncekiGelir = await _context.Gelirler
+                .Where(g => g.IsletmeId == isletmeId && g.Tarih >= oncekiBaslangic && g.Tarih < baslangic)
+                .SumAsync(g => g.Tutar);
+
+            rapor.OncekiGider = await _context.Giderler
+                .Where(g => g.IsletmeId == isletmeId && g.Tarih >= oncekiBaslangic && g.Tarih < baslangic)
+                .SumAsync(g => g.Tutar);
+
+            // Gider dağılımı
             rapor.GiderDagilimi = await giderler
                 .GroupBy(g => g.GiderKategorisi!.Ad)
                 .Select(grup => new KategoriToplami

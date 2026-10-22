@@ -6,6 +6,21 @@
                         "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık" };
 }
 
+@functions {
+    string DegisimMetni(decimal? yuzde)
+    {
+        if (yuzde == null) return "Geçen ay veri yok";
+        if (yuzde == 0) return "Geçen ayla aynı";
+        return $"Geçen aya göre %{Math.Abs(yuzde.Value):N1} {(yuzde > 0 ? "arttı" : "azaldı")}";
+    }
+
+    string DegisimSimgesi(decimal? yuzde)
+    {
+        if (yuzde == null || yuzde == 0) return "bi-dash";
+        return yuzde > 0 ? "bi-caret-up-fill" : "bi-caret-down-fill";
+    }
+}
+
 <h1>Aylık Kâr Raporu</h1>
 <hr />
 
@@ -40,30 +55,40 @@
 }
 else
 {
+    var gelirDegisim = EsnafKar.Models.KarRaporu.Degisim(Model.ToplamGelir, Model.OncekiGelir);
+    var giderDegisim = EsnafKar.Models.KarRaporu.Degisim(Model.ToplamGider, Model.OncekiGider);
+    var karDegisim = EsnafKar.Models.KarRaporu.Degisim(Model.NetKar, Model.OncekiNetKar);
+
     <h4 class="mb-3">@aylar[Model.Ay - 1] @Model.Yil</h4>
 
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="card text-bg-success">
+            <div class="card text-bg-success h-100">
                 <div class="card-body">
                     <div><i class="bi bi-arrow-up-circle"></i> Toplam Gelir</div>
                     <div class="fs-3 fw-bold">@Model.ToplamGelir.ToString("N2") ₺</div>
+                    <div class="small"><i class="bi @DegisimSimgesi(gelirDegisim)"></i> @DegisimMetni(gelirDegisim)</div>
+                    <div class="small opacity-75">Geçen ay: @Model.OncekiGelir.ToString("N2") ₺</div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-bg-danger">
+            <div class="card text-bg-danger h-100">
                 <div class="card-body">
                     <div><i class="bi bi-arrow-down-circle"></i> Toplam Gider</div>
                     <div class="fs-3 fw-bold">@Model.ToplamGider.ToString("N2") ₺</div>
+                    <div class="small"><i class="bi @DegisimSimgesi(giderDegisim)"></i> @DegisimMetni(giderDegisim)</div>
+                    <div class="small opacity-75">Geçen ay: @Model.OncekiGider.ToString("N2") ₺</div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card @(Model.NetKar >= 0 ? "text-bg-primary" : "text-bg-warning")">
+            <div class="card @(Model.NetKar >= 0 ? "text-bg-primary" : "text-bg-warning") h-100">
                 <div class="card-body">
                     <div><i class="bi bi-piggy-bank"></i> @(Model.NetKar >= 0 ? "Net Kâr" : "Zarar")</div>
                     <div class="fs-3 fw-bold">@Model.NetKar.ToString("N2") ₺</div>
+                    <div class="small"><i class="bi @DegisimSimgesi(karDegisim)"></i> @DegisimMetni(karDegisim)</div>
+                    <div class="small opacity-75">Geçen ay: @Model.OncekiNetKar.ToString("N2") ₺</div>
                 </div>
             </div>
         </div>
