@@ -13,6 +13,40 @@
     <a asp-action="Create" class="btn btn-danger">+ Yeni Gider Ekle</a>
 </div>
 
+@if (TempData["Bilgi"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> @TempData["Bilgi"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Hata"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-circle"></i> @TempData["Hata"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form asp-action="GecenAyiKopyala" method="post" class="row g-2 align-items-end"
+              onsubmit="return confirm('Seçilen işletmenin geçen ayki giderleri bu aya kopyalanacak. Devam edilsin mi?');">
+            <div class="col-md-5">
+                <label class="form-label small"><i class="bi bi-arrow-repeat" style="color: #dc3545;"></i> Tekrarlayan giderler</label>
+                <select name="isletmeId" asp-items="ViewBag.IsletmeId" class="form-select">
+                    <option value="">-- İşletme seçin --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-arrow-repeat"></i> Geçen Ayın Giderlerini Kopyala</button>
+            </div>
+            <div class="col-md-3 small text-muted">
+                Kira, maaş gibi her ay tekrar eden giderleri tek tıkla bu aya ekler.
+            </div>
+        </form>
+    </div>
+</div>
 <form asp-action="Index" method="get" autocomplete="off" class="row g-2 align-items-end mb-3">
     <div class="col-md-3">
         <label class="form-label small">İşletme</label>

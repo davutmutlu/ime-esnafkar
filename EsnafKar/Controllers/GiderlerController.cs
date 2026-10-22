@@ -78,7 +78,56 @@ namespace EsnafKar.Controllers
             return View(giderler);
         }
 
+        // Geçen ayın giderlerini bu aya kopyalar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GecenAyiKopyala(int isletmeId)
+        {
+            if (!await IsletmeBenimMi(isletmeId))
+            {
+                TempData["Hata"] = "Lütfen bir işletme seçin.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var buAyBasi = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            var gelecekAyBasi = buAyBasi.AddMonths(1);
+            var gecenAyBasi = buAyBasi.AddMonths(-1);
+            var gunSayisi = DateTime.DaysInMonth(buAyBasi.Year, buAyBasi.Month);
+
+            var gecenAyGiderleri = await _context.Giderler
+                .Where(g => g.IsletmeId == isletmeId && g.Tarih >= gecenAyBasi && g.Tarih < buAyBasi)
+                .ToListAsync();
+
+            var buAyKategorileri = await _context.Giderler
+                .Where(g => g.IsletmeId == isletmeId && g.Tarih >= buAyBasi && g.Tarih < gelecekAyBasi)
+                .Select(g => g.GiderKategorisiId)
+                .ToListAsync();
+
+            int sayac = 0;
+            foreach (var eski in gecenAyGiderleri)
+            {
+                if (buAyKategorileri.Contains(eski.GiderKategorisiId)) continue;
+
+                _context.Giderler.Add(new Gider
+                {
+                    IsletmeId = eski.IsletmeId,
+                    GiderKategorisiId = eski.GiderKategorisiId,
+                    Tutar = eski.Tutar,
+                    Tarih = buAyBasi.AddDays(Math.Min(eski.Tarih.Day, gunSayisi) - 1),
+                    Aciklama = eski.Aciklama
+                });
+                sayac++;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Bilgi"] = sayac > 0
+                ? $"Geçen aydan {sayac} gider bu aya kopyalandı. Tutarı değişenleri düzenlemeyi unutmayın."
+                : "Kopyalanacak gider bulunamadı. Geçen ay gider yok ya da bu ayın giderleri zaten girilmiş.";
+            return RedirectToAction(nameof(Index));
+        }
         // Ekleme sayfasını açar
+
         public IActionResult Create()
         {
             ListeleriHazirla();
