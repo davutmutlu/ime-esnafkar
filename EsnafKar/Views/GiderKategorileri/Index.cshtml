@@ -27,7 +27,7 @@
         @foreach (var kategori in Model)
         {
             <tr>
-                <td>@kategori.Ad</td>
+                                <td><i class="bi @EsnafKar.Models.KategoriSimgeleri.Getir(kategori.Ad)" style="color: #fd7e14;"></i> @kategori.Ad</td>
                 <td class="text-end">
                     @if (kategori.KullaniciId == null)
                     {

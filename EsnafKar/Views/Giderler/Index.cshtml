@@ -33,8 +33,7 @@ else
                 <tr>
                     <td>@item.Tarih.ToString("dd.MM.yyyy")</td>
                     <td>@item.Isletme?.Ad</td>
-                    <td>@item.GiderKategorisi?.Ad</td>
-                    <td>@item.Aciklama</td>
+                    <td><i class="bi @EsnafKar.Models.KategoriSimgeleri.Getir(item.GiderKategorisi?.Ad)" style="color: #fd7e14;"></i> @item.GiderKategorisi?.Ad</td>                    <td>@item.Aciklama</td>
                     <td class="text-end">@item.Tutar.ToString("N2") ₺</td>
                     <td class="text-end">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>

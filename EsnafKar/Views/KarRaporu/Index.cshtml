@@ -9,7 +9,8 @@
 <h1>Aylık Kâr Raporu</h1>
 <hr />
 
-<form asp-action="Index" method="get" autocomplete="off" class="row g-3 align-items-end mb-4">    <div class="col-md-4">
+<form asp-action="Index" method="get" autocomplete="off" class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
         <label class="form-label">İşletme</label>
         <select name="isletmeId" asp-items="ViewBag.IsletmeId" class="form-select">
             <option value="">-- İşletme seçin --</option>
@@ -45,7 +46,7 @@ else
         <div class="col-md-4">
             <div class="card text-bg-success">
                 <div class="card-body">
-                    <div>Toplam Gelir</div>
+                    <div><i class="bi bi-arrow-up-circle"></i> Toplam Gelir</div>
                     <div class="fs-3 fw-bold">@Model.ToplamGelir.ToString("N2") ₺</div>
                 </div>
             </div>
@@ -53,7 +54,7 @@ else
         <div class="col-md-4">
             <div class="card text-bg-danger">
                 <div class="card-body">
-                    <div>Toplam Gider</div>
+                    <div><i class="bi bi-arrow-down-circle"></i> Toplam Gider</div>
                     <div class="fs-3 fw-bold">@Model.ToplamGider.ToString("N2") ₺</div>
                 </div>
             </div>
@@ -61,7 +62,7 @@ else
         <div class="col-md-4">
             <div class="card @(Model.NetKar >= 0 ? "text-bg-primary" : "text-bg-warning")">
                 <div class="card-body">
-                    <div>@(Model.NetKar >= 0 ? "Net Kâr" : "Zarar")</div>
+                    <div><i class="bi bi-piggy-bank"></i> @(Model.NetKar >= 0 ? "Net Kâr" : "Zarar")</div>
                     <div class="fs-3 fw-bold">@Model.NetKar.ToString("N2") ₺</div>
                 </div>
             </div>
@@ -87,7 +88,7 @@ else
                 @foreach (var k in Model.GiderDagilimi)
                 {
                     <tr>
-                        <td>@k.Kategori</td>
+                        <td><i class="bi @EsnafKar.Models.KategoriSimgeleri.Getir(k.Kategori)" style="color: #fd7e14;"></i> @k.Kategori</td>
                         <td class="text-end">@k.Tutar.ToString("N2") ₺</td>
                         <td class="text-end">%@((k.Tutar / Model.ToplamGider * 100).ToString("N1"))</td>
                     </tr>
