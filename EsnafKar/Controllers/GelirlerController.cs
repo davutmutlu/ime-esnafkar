@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using ClosedXML.Excel;
 using EsnafKar.Data;
 using EsnafKar.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -33,27 +34,19 @@ namespace EsnafKar.Controllers
             return await _context.Isletmeler.AnyAsync(i => i.Id == isletmeId && i.KullaniciId == kullaniciId);
         }
 
+        // Filtreleri sorguya uygular (liste ve Excel aynı filtreyi kullanır)
+        private static IQueryable<Gelir> FiltreUygula(IQueryable<Gelir> sorgu, int? isletmeId, int? yil, int? ay)
+        {
+            if (isletmeId != null) sorgu = sorgu.Where(g => g.IsletmeId == isletmeId);
+            if (yil != null) sorgu = sorgu.Where(g => g.Tarih.Year == yil);
+            if (ay != null) sorgu = sorgu.Where(g => g.Tarih.Month == ay);
+            return sorgu;
+        }
+
         // Liste sayfası (filtreli)
         public async Task<IActionResult> Index(int? isletmeId, int? yil, int? ay)
         {
-            var sorgu = Gelirlerim();
-
-            if (isletmeId != null)
-            {
-                sorgu = sorgu.Where(g => g.IsletmeId == isletmeId);
-            }
-
-            if (yil != null)
-            {
-                sorgu = sorgu.Where(g => g.Tarih.Year == yil);
-            }
-
-            if (ay != null)
-            {
-                sorgu = sorgu.Where(g => g.Tarih.Month == ay);
-            }
-
-            var gelirler = await sorgu
+            var gelirler = await FiltreUygula(Gelirlerim(), isletmeId, yil, ay)
                 .Include(g => g.Isletme)
                 .OrderByDescending(g => g.Tarih)
                 .ToListAsync();
@@ -62,6 +55,57 @@ namespace EsnafKar.Controllers
             ViewData["SeciliYil"] = yil;
             ViewData["SeciliAy"] = ay;
             return View(gelirler);
+        }
+
+        // Filtrelenmiş listeyi Excel dosyası olarak indirir
+        public async Task<IActionResult> ExcelAktar(int? isletmeId, int? yil, int? ay)
+        {
+            var gelirler = await FiltreUygula(Gelirlerim(), isletmeId, yil, ay)
+                .Include(g => g.Isletme)
+                .OrderByDescending(g => g.Tarih)
+                .ToListAsync();
+
+            using var kitap = new XLWorkbook();
+            var sayfa = kitap.Worksheets.Add("Gelirler");
+
+            // Başlık satırı
+            sayfa.Cell(1, 1).Value = "Tarih";
+            sayfa.Cell(1, 2).Value = "İşletme";
+            sayfa.Cell(1, 3).Value = "Açıklama";
+            sayfa.Cell(1, 4).Value = "Günlük Ciro";
+
+            var baslik = sayfa.Range(1, 1, 1, 4);
+            baslik.Style.Font.Bold = true;
+            baslik.Style.Font.FontColor = XLColor.White;
+            baslik.Style.Fill.BackgroundColor = XLColor.FromHtml("#198754");
+
+            // Kayıtlar
+            int satir = 2;
+            foreach (var g in gelirler)
+            {
+                sayfa.Cell(satir, 1).Value = g.Tarih;
+                sayfa.Cell(satir, 2).Value = g.Isletme?.Ad ?? "";
+                sayfa.Cell(satir, 3).Value = g.Aciklama ?? "";
+                sayfa.Cell(satir, 4).Value = (double)g.Tutar;
+                satir++;
+            }
+
+            // Toplam satırı
+            sayfa.Cell(satir, 3).Value = "Toplam";
+            sayfa.Cell(satir, 4).Value = (double)gelirler.Sum(g => g.Tutar);
+            sayfa.Range(satir, 3, satir, 4).Style.Font.Bold = true;
+
+            // Biçimler
+            sayfa.Column(1).Style.DateFormat.Format = "dd.MM.yyyy";
+            sayfa.Column(4).Style.NumberFormat.Format = "#,##0.00 \"₺\"";
+            sayfa.Columns().AdjustToContents();
+
+            using var akis = new MemoryStream();
+            kitap.SaveAs(akis);
+
+            return File(akis.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Gelirler_{DateTime.Today:yyyy-MM-dd}.xlsx");
         }
 
         // Ekleme sayfasını açar

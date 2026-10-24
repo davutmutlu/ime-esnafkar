@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ClosedXML.Excel;
 using EsnafKar.Data;
 using EsnafKar.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -125,6 +126,65 @@ namespace EsnafKar.Controllers
                 ? $"Geçen aydan {sayac} gider bu aya kopyalandı. Tutarı değişenleri düzenlemeyi unutmayın."
                 : "Kopyalanacak gider bulunamadı. Geçen ay gider yok ya da bu ayın giderleri zaten girilmiş.";
             return RedirectToAction(nameof(Index));
+        }
+        // Filtrelenmiş giderleri Excel dosyası olarak indirir
+        public async Task<IActionResult> ExcelAktar(int? isletmeId, int? kategoriId, int? yil, int? ay)
+        {
+            var sorgu = Giderlerim();
+            if (isletmeId != null) sorgu = sorgu.Where(g => g.IsletmeId == isletmeId);
+            if (kategoriId != null) sorgu = sorgu.Where(g => g.GiderKategorisi!.Id == kategoriId);
+            if (yil != null) sorgu = sorgu.Where(g => g.Tarih.Year == yil);
+            if (ay != null) sorgu = sorgu.Where(g => g.Tarih.Month == ay);
+
+            var giderler = await sorgu
+                .Include(g => g.Isletme)
+                .Include(g => g.GiderKategorisi)
+                .OrderByDescending(g => g.Tarih)
+                .ToListAsync();
+
+            using var kitap = new XLWorkbook();
+            var sayfa = kitap.Worksheets.Add("Giderler");
+
+            // Başlık satırı
+            sayfa.Cell(1, 1).Value = "Tarih";
+            sayfa.Cell(1, 2).Value = "İşletme";
+            sayfa.Cell(1, 3).Value = "Kategori";
+            sayfa.Cell(1, 4).Value = "Açıklama";
+            sayfa.Cell(1, 5).Value = "Tutar";
+
+            var baslik = sayfa.Range(1, 1, 1, 5);
+            baslik.Style.Font.Bold = true;
+            baslik.Style.Font.FontColor = XLColor.White;
+            baslik.Style.Fill.BackgroundColor = XLColor.FromHtml("#dc3545");
+
+            // Kayıtlar
+            int satir = 2;
+            foreach (var g in giderler)
+            {
+                sayfa.Cell(satir, 1).Value = g.Tarih;
+                sayfa.Cell(satir, 2).Value = g.Isletme?.Ad ?? "";
+                sayfa.Cell(satir, 3).Value = g.GiderKategorisi?.Ad ?? "";
+                sayfa.Cell(satir, 4).Value = g.Aciklama ?? "";
+                sayfa.Cell(satir, 5).Value = (double)g.Tutar;
+                satir++;
+            }
+
+            // Toplam satırı
+            sayfa.Cell(satir, 4).Value = "Toplam";
+            sayfa.Cell(satir, 5).Value = (double)giderler.Sum(g => g.Tutar);
+            sayfa.Range(satir, 4, satir, 5).Style.Font.Bold = true;
+
+            // Biçimler
+            sayfa.Column(1).Style.DateFormat.Format = "dd.MM.yyyy";
+            sayfa.Column(5).Style.NumberFormat.Format = "#,##0.00 \"₺\"";
+            sayfa.Columns().AdjustToContents();
+
+            using var akis = new MemoryStream();
+            kitap.SaveAs(akis);
+
+            return File(akis.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Giderler_{DateTime.Today:yyyy-MM-dd}.xlsx");
         }
         // Ekleme sayfasını açar
 
