@@ -59,8 +59,12 @@ else
     var giderDegisim = EsnafKar.Models.KarRaporu.Degisim(Model.ToplamGider, Model.OncekiGider);
     var karDegisim = EsnafKar.Models.KarRaporu.Degisim(Model.NetKar, Model.OncekiNetKar);
 
-    <h4 class="mb-3">@aylar[Model.Ay - 1] @Model.Yil</h4>
-
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">@aylar[Model.Ay - 1] @Model.Yil</h4>
+        <button type="button" onclick="window.print()" class="btn btn-outline-secondary yazdirma-gizle">
+            <i class="bi bi-printer"></i> Yazdır / PDF
+        </button>
+    </div>
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card text-bg-success h-100">
