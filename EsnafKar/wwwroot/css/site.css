@@ -58,3 +58,42 @@ body {
 .navbar .bi {
     margin-right: 2px;
 }
+/* ===== Genel görünüm ===== */
+body {
+    background-color: #f4f6fb;
+}
+/* Üst menü: beyaz zemin + hafif gölge */
+.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-bottom: none !important;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #0d6efd !important;
+}
+
+/* Kartlar: yuvarlak köşe + üzerine gelince hafif yükselme */
+.card {
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+/* Tablolar beyaz kutu içinde dursun */
+.table {
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Alt bilgi */
+.footer {
+    background-color: #ffffff;
+}

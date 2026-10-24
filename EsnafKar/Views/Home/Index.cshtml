@@ -7,13 +7,126 @@
     var buAy = aylar[DateTime.Today.Month - 1] + " " + DateTime.Today.Year;
 }
 
-<div class="text-center py-4">
-    <h1 class="display-5 fw-bold"><i class="bi bi-shop-window text-primary"></i> EsnafKar</h1>
-    <p class="lead">Gelirinizi ve giderinizi girin, ayın sonunda ne kadar kazandığınızı görün.</p>
-</div>
-
-@if (Model != null)
+@if (Model == null)
 {
+    @* ===== GİRİŞ YAPMAMIŞ ZİYARETÇİ: TANITIM SAYFASI ===== *@
+
+    <section class="p-5 mb-5 rounded-4 text-white shadow"
+             style="background: linear-gradient(135deg, #0d6efd 0%, #6f42c1 100%);">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bold"><i class="bi bi-shop-window"></i> EsnafKar</h1>
+                <p class="fs-4">Dükkanınız kâr mı ediyor, zarar mı? Ay sonunu beklemeden görün.</p>
+                <p class="opacity-75">
+                    Kafe, market, berber, büfe... Hangi işi yapıyorsanız yapın, günlük cironuzu ve
+                    masraflarınızı girin. EsnafKar hesabı sizin yerinize yapsın.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <a asp-controller="Hesap" asp-action="Kayit" class="btn btn-light btn-lg fw-semibold">
+                        <i class="bi bi-person-plus"></i> Ücretsiz Kayıt Ol
+                    </a>
+                    <a asp-controller="Hesap" asp-action="Giris" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center">
+                <i class="bi bi-graph-up-arrow" style="font-size: 9rem; opacity: 0.85;"></i>
+            </div>
+        </div>
+    </section>
+
+    <h2 class="text-center fw-bold mb-4">Nasıl Çalışır?</h2>
+    <div class="row g-4 mb-5 text-center">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3">
+                <div class="card-body">
+                    <div class="fs-1 fw-bold" style="color: #0d6efd;">1</div>
+                    <i class="bi bi-shop fs-1" style="color: #0d6efd;"></i>
+                    <h5 class="mt-2">İşletmenizi ekleyin</h5>
+                    <p class="text-muted mb-0">Dükkanınızın adını ve türünü girin. Birden fazla işletmeniz varsa hepsini ekleyebilirsiniz.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3">
+                <div class="card-body">
+                    <div class="fs-1 fw-bold" style="color: #198754;">2</div>
+                    <i class="bi bi-pencil-square fs-1" style="color: #198754;"></i>
+                    <h5 class="mt-2">Gelir ve giderleri girin</h5>
+                    <p class="text-muted mb-0">Her günün cirosunu, kira, fatura ve maaş gibi masrafları birkaç tıkla kaydedin.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3">
+                <div class="card-body">
+                    <div class="fs-1 fw-bold" style="color: #6f42c1;">3</div>
+                    <i class="bi bi-bar-chart-line fs-1" style="color: #6f42c1;"></i>
+                    <h5 class="mt-2">Kârınızı görün</h5>
+                    <p class="text-muted mb-0">Aylık rapor, grafikler ve geçen ayla karşılaştırma otomatik hazırlanır.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-center fw-bold mb-4">Neler Var?</h2>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="d-flex gap-3">
+                <i class="bi bi-pie-chart fs-2" style="color: #fd7e14;"></i>
+                <div>
+                    <h6 class="fw-bold">Grafikli rapor</h6>
+                    <p class="text-muted small mb-0">Son 6 ayın gelir-gideri ve paranızın nereye gittiği tek bakışta.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="d-flex gap-3">
+                <i class="bi bi-arrow-repeat fs-2" style="color: #dc3545;"></i>
+                <div>
+                    <h6 class="fw-bold">Tekrarlayan giderler</h6>
+                    <p class="text-muted small mb-0">Kira, maaş gibi her ay aynı olan giderleri tek tıkla bu aya kopyalayın.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="d-flex gap-3">
+                <i class="bi bi-file-earmark-excel fs-2" style="color: #198754;"></i>
+                <div>
+                    <h6 class="fw-bold">Excel'e aktarma</h6>
+                    <p class="text-muted small mb-0">Kayıtlarınızı muhasebecinize göndermek için Excel dosyası olarak indirin.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="d-flex gap-3">
+                <i class="bi bi-shield-lock fs-2" style="color: #0d6efd;"></i>
+                <div>
+                    <h6 class="fw-bold">Size özel</h6>
+                    <p class="text-muted small mb-0">Her kullanıcı sadece kendi verisini görür. Bilgileriniz şifreli hesabınızda kalır.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center p-4 mb-4 rounded-4 bg-white shadow-sm">
+        <h4 class="fw-bold">Hemen başlayın</h4>
+        <p class="text-muted">Kayıt olmak bir dakika sürer, ücret yoktur.</p>
+        <a asp-controller="Hesap" asp-action="Kayit" class="btn btn-primary btn-lg">
+            <i class="bi bi-person-plus"></i> Kayıt Ol
+        </a>
+    </div>
+}
+else
+{
+    @* ===== GİRİŞ YAPMIŞ KULLANICI: GÖSTERGE PANELİ ===== *@
+
+    <div class="text-center py-4">
+        <h1 class="display-5 fw-bold"><i class="bi bi-shop-window text-primary"></i> EsnafKar</h1>
+        <p class="lead">Gelirinizi ve giderinizi girin, ayın sonunda ne kadar kazandığınızı görün.</p>
+    </div>
+
     <h4 class="mb-3"><i class="bi bi-speedometer2"></i> @buAy Özeti</h4>
 
     @if (Model.IsletmeSayisi == 0)
@@ -60,47 +173,47 @@
             </div>
         </div>
     }
-}
 
-<div class="row g-4">
-    <div class="col-md-3">
-        <div class="card h-100" style="border-top: 4px solid #0d6efd;">
-            <div class="card-body d-flex flex-column">
-                <i class="bi bi-shop fs-1 mb-2" style="color: #0d6efd;"></i>
-                <h5 class="card-title">İşletmeler</h5>
-                <p class="card-text">İşletmenizi ve türünü kaydedin.</p>
-                <a asp-controller="Isletmeler" asp-action="Index" class="btn btn-outline-primary mt-auto align-self-start">Git</a>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card h-100" style="border-top: 4px solid #0d6efd;">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-shop fs-1 mb-2" style="color: #0d6efd;"></i>
+                    <h5 class="card-title">İşletmeler</h5>
+                    <p class="card-text">İşletmenizi ve türünü kaydedin.</p>
+                    <a asp-controller="Isletmeler" asp-action="Index" class="btn btn-outline-primary mt-auto align-self-start">Git</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100" style="border-top: 4px solid #198754;">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-cash-coin fs-1 mb-2" style="color: #198754;"></i>
+                    <h5 class="card-title">Gelirler</h5>
+                    <p class="card-text">Her günün cirosunu girin.</p>
+                    <a asp-controller="Gelirler" asp-action="Index" class="btn btn-outline-success mt-auto align-self-start">Git</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100" style="border-top: 4px solid #dc3545;">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-receipt fs-1 mb-2" style="color: #dc3545;"></i>
+                    <h5 class="card-title">Giderler</h5>
+                    <p class="card-text">Kira, fatura, maaş gibi masraflarınızı girin.</p>
+                    <a asp-controller="Giderler" asp-action="Index" class="btn btn-outline-danger mt-auto align-self-start">Git</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100" style="border-top: 4px solid #6f42c1;">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-graph-up-arrow fs-1 mb-2" style="color: #6f42c1;"></i>
+                    <h5 class="card-title">Kâr Raporu</h5>
+                    <p class="card-text">Aylık gelirinizi, giderinizi ve net kârınızı görün.</p>
+                    <a asp-controller="KarRaporu" asp-action="Index" class="btn text-white mt-auto align-self-start" style="background-color: #6f42c1;">Raporu Gör</a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card h-100" style="border-top: 4px solid #198754;">
-            <div class="card-body d-flex flex-column">
-                <i class="bi bi-cash-coin fs-1 mb-2" style="color: #198754;"></i>
-                <h5 class="card-title">Gelirler</h5>
-                <p class="card-text">Her günün cirosunu girin.</p>
-                <a asp-controller="Gelirler" asp-action="Index" class="btn btn-outline-success mt-auto align-self-start">Git</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card h-100" style="border-top: 4px solid #dc3545;">
-            <div class="card-body d-flex flex-column">
-                <i class="bi bi-receipt fs-1 mb-2" style="color: #dc3545;"></i>
-                <h5 class="card-title">Giderler</h5>
-                <p class="card-text">Kira, fatura, maaş gibi masraflarınızı girin.</p>
-                <a asp-controller="Giderler" asp-action="Index" class="btn btn-outline-danger mt-auto align-self-start">Git</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card h-100" style="border-top: 4px solid #6f42c1;">
-            <div class="card-body d-flex flex-column">
-                <i class="bi bi-graph-up-arrow fs-1 mb-2" style="color: #6f42c1;"></i>
-                <h5 class="card-title">Kâr Raporu</h5>
-                <p class="card-text">Aylık gelirinizi, giderinizi ve net kârınızı görün.</p>
-                <a asp-controller="KarRaporu" asp-action="Index" class="btn text-white mt-auto align-self-start" style="background-color: #6f42c1;">Raporu Gör</a>
-            </div>
-        </div>
-    </div>
-</div>
+}

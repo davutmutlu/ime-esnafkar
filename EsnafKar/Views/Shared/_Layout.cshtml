@@ -22,6 +22,8 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                    
                     <ul class="navbar-nav flex-grow-1">
+                                               @if (User.Identity?.IsAuthenticated == true)
+                        {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i> Ana Sayfa</a>
                         </li>
@@ -40,6 +42,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="KarRaporu" asp-action="Index"><i class="bi bi-graph-up-arrow"></i> Kâr Raporu</a>
                         </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
