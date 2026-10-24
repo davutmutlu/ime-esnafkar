@@ -97,3 +97,50 @@ body {
 .footer {
     background-color: #ffffff;
 }
+/* ===== Yazdırma / PDF ayarları ===== */
+@media print {
+    /* Kâğıtta gereksiz olanları gizle */
+    .navbar, .footer, form, .yazdirma-gizle {
+        display: none !important;
+    }
+
+    /* Renkli kartların ve grafiklerin renkleri basılsın */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body {
+        background: #ffffff !important;
+    }
+
+    /* Sayfanın tamamını kullan */
+    .container {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    /* Kâğıt dar olsa da kartlar yan yana dursun */
+    .col-md-4, .col-lg-4 {
+        flex: 0 0 33.333% !important;
+        max-width: 33.333% !important;
+    }
+
+    .col-lg-8 {
+        flex: 0 0 66.666% !important;
+        max-width: 66.666% !important;
+    }
+
+    /* Kart ortadan bölünüp iki sayfaya yayılmasın, gölgeler basılmasın */
+    .card, .table {
+        break-inside: avoid;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* Grafikler kutularına sığsın, taşmasın */
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
